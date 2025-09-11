@@ -16,9 +16,6 @@ WORKDIR /var/www
 # Copy everything
 COPY . .
 
-# Install dependencies
-RUN composer install
-
 # Set permissions
 RUN chmod -R 775 /var/www/storage
 
