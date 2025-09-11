@@ -1,11 +1,9 @@
+# Use official PHP image with necessary extensions
 FROM php:8.2-cli
 
-# Install BusyBox, supervisor, and cron
-RUN apt-get update && apt-get install -y \
-    busybox \
-    supervisor \
-    cron \
-    && docker-php-ext-install pdo pdo_mysql
+# Install dependencies
+RUN apt-get update && apt-get install -y unzip zip curl git libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql zip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -13,22 +11,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy everything
+# Copy project files into container
 COPY . .
 
-# Set permissions
-RUN chmod -R 775 /var/www/storage
+# Set file permissions
+RUN chmod -R 755 /var/www
 
-# Copy supervisor config
-COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Setup cron job
-# RUN echo "* * * * * cd /var/www && busybox sh -c '/usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/cron.log 2>&1'" | crontab -
-
-# Setup cron job directly with timeout protection
-RUN echo "* * * * * cd /var/www && /usr/local/bin/php artisan schedule:run >> /var/www/storage/logs/cron.log 2>&1" | crontab -
-
+# Expose Laravel default dev server port
 EXPOSE 80
 
-# Start supervisor
-CMD ["/usr/bin/supervisord", "-n"]
+# Start Laravel dev server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
