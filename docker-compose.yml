@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    depends_on:
+      - mysql-test
+    networks:
+      - laravel-net
+
+  mysql-test:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: laravel
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - laravel-net
+
+volumes:
+  db_data:
+
+networks:
+  laravel-net:
+    driver: bridge
