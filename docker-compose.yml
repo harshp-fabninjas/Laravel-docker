@@ -3,11 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: laravel-app-container
+    container_name: laravel_app
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - .:/var/www
+      - ./:/var/www
+      - ./docker/supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
     depends_on:
       - mysql-test
     networks:
@@ -17,7 +18,7 @@ services:
     image: mysql:8.0
     container_name: mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: laravel

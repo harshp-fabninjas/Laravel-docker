@@ -4,28 +4,31 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class Test3 extends Command
+class Test1Command extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:test3';
+    protected $signature = 'test1';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Test command 1 - runs every 10 seconds';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        sleep(5);
-        logger('3');
+        sleep(15);
+
+        logger('Test1 command executed successfully - runs every 10 seconds');
+
+        return Command::SUCCESS;
     }
 }
